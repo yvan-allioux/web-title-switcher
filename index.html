@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titre Dynamique</title>
+    <style>
+        /* CSS pour centrer le titre */
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Ajout d'une couleur de fond pour le contraste */
+        }
+    
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 0 5%; /* Ajout d'un rembourrage pour s'assurer qu'il y a toujours un peu d'espace de chaque côté */
+        }
+    
+        h1 {
+            font-size: calc(10vw + 2em); /* Base la taille de la police sur la largeur de l'écran avec un minimum défini */
+            width: 90%; /* 90% de la largeur de l'écran */
+            text-align: center; /* Centre le texte */
+            white-space: normal; /* Autorise le passage à la ligne */
+            word-wrap: break-word; /* Casse les mots trop longs */
+            overflow-wrap: break-word; /* Casse les mots trop longs */
+        }
+
+        .color0 { background-color: #E57373; color: #FFFFFF; }
+        .color1 { background-color: #81C784; color: #000000; }
+        .color2 { background-color: #64B5F6; color: #FFFFFF; }
+        .color3 { background-color: #FFD54F; color: #000000; }
+        .color4 { background-color: #7986CB; color: #FFFFFF; }
+        .color5 { background-color: #A1887F; color: #FFFFFF; }
+        .color6 { background-color: #4DB6AC; color: #000000; }
+        .color7 { background-color: #FF8A65; color: #FFFFFF; }
+        .color8 { background-color: #9575CD; color: #FFFFFF; }
+        .color9 { background-color: #F06292; color: #FFFFFF; }
+
+    </style>
+</head>
+
+<body>
+    <div class="center">
+    <h1 id="dynamicTitle"></h1> <!-- initialisé vide -->
+</div>
+
+<script>
+    function getURLParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const params = {};
+
+        for (const [key, value] of urlParams.entries()) {
+            if (key.startsWith("title")) {
+                params[key] = htmlSpecialChars(value);
+            }
+        }
+
+        return params;
+    }
+
+    function htmlSpecialChars(str) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+
+        return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // Récupération des titres de l'URL
+    const params = getURLParameters();
+    const titles = Object.values(params); // Convertit les valeurs des paramètres en tableau
+    let currentIndex = 0;
+
+    // Initialisation du premier titre si disponible
+    if (titles.length) {
+        document.getElementById('dynamicTitle').textContent = titles[currentIndex];
+    } else {
+        document.getElementById('dynamicTitle').textContent = "Aucun titre trouvé";
+    }
+
+    // Fonction pour mettre à jour le titre et la couleur
+    function updateTitle() {
+        currentIndex = (currentIndex + 1) % titles.length;
+        document.getElementById('dynamicTitle').textContent = titles[currentIndex];
+
+        // Mettre à jour la couleur
+        const colorClass = `color${currentIndex % 10}`; // 10 est le nombre de couleurs que vous avez défini
+        document.body.className = colorClass; // Affecte la couleur au corps pour changer le fond et la couleur du titre
+    }
+
+    // Ajout de l'écouteur d'événement pour le clic
+    if (titles.length > 1) { // Seulement si plus d'un titre est fourni
+        document.addEventListener('click', updateTitle);
+    }
+
+</script>
+</body>
+
+</html>
